@@ -1,15 +1,13 @@
 package com.otp.demoprojecttest
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.otp.demoprojecttest.extension.Extension.showToast
 import com.otp.demoprojecttest.databinding.ActivityMainBinding
 import com.otp.demoprojecttest.model.ItemRepository
 import com.otp.demoprojecttest.network.ApiService
@@ -43,34 +41,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun setUpRecyclerView() {
         itemAdapter = ItemAdapter(mutableListOf())
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.recyclerView.adapter = itemAdapter
+        recyclerView.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = itemAdapter
+        }
     }
 
     private fun setUpViewModel() {
         val apiService = ApiService.create()
         val itemRepository = ItemRepository(apiService)
-        viewModel =
-            ViewModelProvider(
-                this,
-                ItemViewModelFactory(itemRepository)
-            ).get(ItemViewModel::class.java)
+        viewModel = ViewModelProvider(
+            this,
+            ItemViewModelFactory(itemRepository)
+        )[ItemViewModel::class.java]
     }
 
     private fun observeViewModel() {
-        viewModel.items.observe(this, Observer { items ->
+        viewModel.items.observe(this) { items ->
             items?.let {
                 itemAdapter.updateItems(it)
                 showRecyclerView()
             }
-        })
-        viewModel.error.observe(this, Observer { error ->
-            error?.let {
+        }
+        viewModel.error.observe(this) { error ->
+            error?.let { errorMessage ->
                 // Handle the error, for example, display a toast or log it
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+                showToast(errorMessage)
                 showRecyclerView() // Ensure RecyclerView is visible even if there's an error
             }
-        })
+        }
     }
 
     private fun fetchData() {
