@@ -6,10 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.otp.demoprojecttest.model.Item
 import com.otp.demoprojecttest.model.ItemRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ItemViewModel(private val repository: ItemRepository) : ViewModel() {
+@HiltViewModel
+class ItemViewModel @Inject constructor(private val repository: ItemRepository) : ViewModel() {
     private val _items = MutableLiveData<List<Item>?>()
     val items: MutableLiveData<List<Item>?> get() = _items
 

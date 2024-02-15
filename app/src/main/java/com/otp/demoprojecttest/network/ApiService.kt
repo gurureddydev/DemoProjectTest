@@ -10,18 +10,4 @@ import retrofit2.http.GET
 interface ApiService {
     @GET("v3/db9421b8-df8d-4371-b352-517d530b765b")
         suspend fun getItems(): Response<ApiResponse>
-
-
-    companion object {
-
-        fun create(): ApiService {
-            return Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(ApiService::class.java)
-        }
-
-        private const val BASE_URL = "https://run.mocky.io/"
-    }
 }
